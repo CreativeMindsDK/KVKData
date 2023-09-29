@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CreativeMinds.KVKData.RestAPI.Dtos;
 using System.Net.Http.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CreativeMinds.KVKData.RestAPI {
 
@@ -23,11 +25,15 @@ namespace CreativeMinds.KVKData.RestAPI {
 			this.apiKey = settings["APIKey"];
 		}
 
+		public async Task<SearchResponse> SearchForCompanyByIdAsync(Int32 companyId, Int32 maxHits, CancellationToken cancellationToken) {
+			return await this.SearchAsync(new Dictionary<String, String> { { "kvkNummer", companyId.ToString() } }, maxHits, cancellationToken);
+		}
 
+		public async Task<SearchResponse> SearchForCompanyByNameAsync(String query, Int32 maxHits, CancellationToken cancellationToken) {
+			return await this.SearchAsync(new Dictionary<String, String> { { "handelsnaam", query } }, maxHits, cancellationToken);
+		}
 
-		public async Task<SearchResponse> SearchForCompanyByNamesAsync(String query, Int32 maxHits, CancellationToken cancellationToken) {
-
-
+		private async Task<SearchResponse> SearchAsync(Dictionary<String, String> parameters, Int32 maxHits, CancellationToken cancellationToken) {
 			HttpClient client = new HttpClient();
 			client.Timeout = new TimeSpan(0, 0, 0, 0, 5000);
 			client.BaseAddress = new Uri("https://api.kvk.nl/test/api/v1/zoeken");
@@ -35,10 +41,9 @@ namespace CreativeMinds.KVKData.RestAPI {
 				  .Accept
 				  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-			//
-
 			try {
-				HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "?handelsnaam=Test Stichting Bolderbast");
+				String urlParameters = String.Join("&", parameters.Select(l => $"{l.Key}={l.Value}"));
+				HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"?{urlParameters}");
 				request.Headers.Add("apikey", this.apiKey);
 				//request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
 				//request.Content = new StringContent(searchBody, Encoding.UTF8, "application/json");
@@ -56,8 +61,6 @@ namespace CreativeMinds.KVKData.RestAPI {
 			catch (Exception ex) {
 				throw ex;
 			}
-
-
 		}
 	}
 }

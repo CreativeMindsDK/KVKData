@@ -13,5 +13,10 @@ namespace CreativeMinds.KVKData.RestAPI.Dtos {
 		public Int32 Total { get; set; }
 		[JsonPropertyName("resultaten")]
 		public IEnumerable<SearchResult> Results{ get; set; }
+		[JsonPropertyName("vorige")]
+		public String Previous { get; set; }
+		[JsonPropertyName("volgende")]
+		public String Next { get; set; }
+		// TODO: Links		
 	}
 }

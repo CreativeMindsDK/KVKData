@@ -17,7 +17,9 @@ CancellationToken cancellationToken = new CancellationToken();
 
 
 CreativeMinds.KVKData.RestAPI.IKVKSearchEngine search = new KVKRestApiSearchEngine(config.GetSection("KVKData"));
-var data = search.SearchForCompanyByNamesAsync("", 1, cancellationToken).Result;
+var data = search.SearchForCompanyByNameAsync("Test Stichting Bolderbast", 1, cancellationToken).Result;
 
+
+data = search.SearchForCompanyByIdAsync(69599068, 1, cancellationToken).Result;
 
 String tremp = "";

@@ -1,0 +1,21 @@
+version: 0.5.0.{build}
+image: Visual Studio 2022
+configuration: Release
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+nuget:
+  account_feed: true
+  project_feed: true
+build_script:
+  - ps: >-
+      dotnet build src\creativeminds.kvkdata.restapi\ -c Release
+
+after_build:
+  - ps: >-
+      Push-AppveyorArtifact src\creativeminds.kvkdata.restapi\bin\release\*.nupkg
